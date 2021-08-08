@@ -18,6 +18,11 @@ import slixmpp
 import base64, time
 import threading
 
+
+if sys.platform == 'win32' and sys.version_info >= (3, 8):
+     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
+
 print("BIENVENIDO AL CHAT")
 print("PRESIONE 1 PARA REGISTRARSE EN EL SERVIDOR DE ALUMCHAT")
 print("PRESIONE 2 PARA REGISTRARSE EN EL SERVIDOR DE ALUMCHAT")
