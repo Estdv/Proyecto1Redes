@@ -78,7 +78,7 @@ class Register(slixmpp.ClientXMPP):
 
 
 print("BIENVENIDO AL CHAT")
-print("PRESIONE 1 PARA REGISTRARSE EN EL SERVIDOR DE ALUMCHAT")
+print("PRESIONE 1 PARA INGRESAR EN EL SERVIDOR DE ALUMCHAT")
 print("PRESIONE 2 PARA REGISTRARSE EN EL SERVIDOR DE ALUMCHAT")
 print("PRESIONE 3 PARA SALIR")
 
@@ -88,58 +88,57 @@ usu = ""
 psd = ""
 
 while (op != "3"):
-    if(op== "1"):
-        usu = input("Ingrese nuevo usuario: ")
-        psd = getpass("Ingrese contraseña: ")
-        
+     if(op== "1"):
+          usu = input("Ingrese nuevo usuario: ")
+          psd = getpass("Ingrese contraseña: ")
 
-    elif(op == "2"):
-        usu = input("Ingrese nuevo usuario: ")
-        psd = getpass("Ingrese contraseña: ")
-        xmpp = Register(usu, psd)
-        xmpp.register_plugin('xep_0030') ### Service Discovery
-        xmpp.register_plugin('xep_0004') ### Data Forms
-        xmpp.register_plugin('xep_0066') ### Band Data
-        xmpp.register_plugin('xep_0077') ### Band Registration
-        xmpp.connect()
-        xmpp.process(forever=False)
-        print("Registro Completado\n")
+     elif(op == "2"):
+          usu = input("Ingrese nuevo usuario: ")
+          psd = getpass("Ingrese contraseña: ")
+          xmpp = Register(usu, psd)
+          xmpp.register_plugin('xep_0030') ### Service Discovery
+          xmpp.register_plugin('xep_0004') ### Data Forms
+          xmpp.register_plugin('xep_0066') ### Band Data
+          xmpp.register_plugin('xep_0077') ### Band Registration
+          xmpp.connect()
+          xmpp.process(forever=False)
+          print("Registro Completado\n")
+     else:
+          print("Opcion invalida intente denuevo")
 
-    else:
-        print("Opcion invalida intente denuevo")
+     op2  = input("")
+     while(op2 != "9"):
+          if(op2 =="1"):
+               print("mostrar contactos")
 
-    while(op2 != "9"):
+          elif(op2 == "2"):
+               print("Agregar contacto")
 
-        if(op2 =="1"):
-            #mostrar contactos
+          elif(op2 == "3"):
+               print("MOstrar detalles de un contacto")
 
-        elif(op2 == "2"):
-            #Agregar contacto
+          elif(op2 == "4"):
+               print("Chat 1 a 1")
 
-        elif(op2 == "3"):
-            #MOstrar detalles de un contacto
+          elif(op2 == "5"):
+               print("Chat grupal")
 
-        elif(op2 == "4"):
-            #Chat 1 a 1
+          elif(op2 == "6"):
+               print("Def mensaje de presencia")
 
-        elif(op2 == "5"):
-            #Chat grupal
+          elif(op2 == "7"):
+               xmpp = Register(usu, psd)
+               xmpp.delete_account()
+               xmpp = None
+               control = False
+               op2 = "9"
 
-        elif(op2 == "6"):
-            #Def mensaje de presencia
+          elif(op2 == "8"):
+               op2 = "9"
+               op = "3"
 
-        elif(op2 == "7"):
-            xmpp = Register(usu, psd)
-            xmpp.delete_account()
-            xmpp = None
-            control = False
-
-        elif(op2 == "8"):
-            op2 = "9"
-            op = "3"
-
-        else:
-            print("Opcion invalida intente denuevo")
+          else:
+               print("Opcion invalida intente denuevo")
 
 print("GRACIAS HASTA LUEGO")
         
