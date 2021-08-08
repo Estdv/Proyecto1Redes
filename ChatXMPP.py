@@ -23,7 +23,11 @@ if sys.platform == 'win32' and sys.version_info >= (3, 8):
      asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
-class Register(slixmpp.ClientXMPP):
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
+#Clase Para Registro y Eliminacion de Cuenta          
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
+     
+class RyE(slixmpp.ClientXMPP):
     def __init__(self, jid, password):
         slixmpp.ClientXMPP.__init__(self, jid, password)
 
@@ -74,6 +78,121 @@ class Register(slixmpp.ClientXMPP):
 
 
 
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
+# Clase Para Contactos e Informacion        
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
+
+class Roster(slixmpp.ClientXMPP):
+    def __init__(self, jid, password, user=None, show=True, message=""):
+        slixmpp.ClientXMPP.__init__(self, jid, password)
+        self.add_event_handler("session_start", self.start)
+        self.presences = threading.Event()
+        self.contacts = []
+        self.user = user
+        self.show = show
+        self.message = message
+
+    async def start(self, event):
+        self.send_presence()
+        await self.get_roster()
+
+        my_contacts = []
+        try:
+            self.get_roster()
+        except IqError as e:
+            print("Error", e)
+        except IqTimeout:
+            print("Timeout del servidor")
+        
+        self.presences.wait(3)
+
+        my_roster = self.client_roster.groups()
+        for group in my_roster:
+            for user in my_roster[group]:
+                status = show = answer = priority = ''
+                self.contacts.append(user)
+                subs = self.client_roster[user]['subscription']
+                conexions = self.client_roster.presence(user)
+                username = self.client_roster[user]['name'] 
+                for answer, pres in conexions.items():
+                    if pres['show']:
+                        show = pres['show']
+                    if pres['status']:
+                        status = pres['status']
+                    if pres['priority']:
+                        status = pres['priority']
+
+                my_contacts.append([
+                    user,
+                    subs,
+                    status,
+                    username,
+                    priority
+                ])
+                self.contacts = my_contacts
+
+        if(self.show):
+            if(not self.user):
+                if len(my_contacts)==0:
+                    print('No hay contactos en linea')
+                else:
+                    print('\n Usuarios: \n\n')
+                for contact in my_contacts:
+                    print('\tUsuario:' + contact[0] + '\t\tSub:' + contact[1] + '\t\tStatus:' + contact[2])
+            else:
+                print('\n\n')
+                for contact in my_contacts:
+                    if(contact[0]==self .user):
+                        print('\tUsuario:' + contact[0] + '\n\tSub:' + contact[1] + '\n\tStatus:' + contact[2] + '\n\tUsuario:' + contact[3] + '\n\tPrioridad:' + contact[4])
+        else:
+            for JID in self.contacts:
+                self.notification_(JID, self.message, 'active')
+
+        self.disconnect()
+        print('\n\n')
+
+    def notification_(self, to, body, my_type):
+
+        message = self.Message()
+        message['to'] = to
+        message['type'] = 'chat'
+        message['body'] = body
+
+        if (my_type == 'active'):
+            fragmentStanza = ET.fromstring("<active xmlns='http://jabber.org/protocol/chatstates'/>")
+        elif (my_type == 'composing'):
+            fragmentStanza = ET.fromstring("<composing xmlns='http://jabber.org/protocol/chatstates'/>")
+        elif (my_type == 'inactive'):
+            fragmentStanza = ET.fromstring("<inactive xmlns='http://jabber.org/protocol/chatstates'/>")
+        message.append(fragmentStanza)
+
+        try:
+            message.send()
+        except IqError as e:
+            print("Error", e)
+        except IqTimeout:
+            print("Timeout del server")
+
+
+
+
+
+#Final de definicion de clases
+            
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+
+#Programa Principal
 
 
 
@@ -95,7 +214,7 @@ while (op != "3"):
      elif(op == "2"):
           usu = input("Ingrese nuevo usuario: ")
           psd = getpass("Ingrese contraseña: ")
-          xmpp = Register(usu, psd)
+          xmpp = RyE(usu, psd)
           xmpp.register_plugin('xep_0030') ### Service Discovery
           xmpp.register_plugin('xep_0004') ### Data Forms
           xmpp.register_plugin('xep_0066') ### Band Data
@@ -106,16 +225,46 @@ while (op != "3"):
      else:
           print("Opcion invalida intente denuevo")
 
+
+     print("Presione 1 para mostrar contactos")
+     print("Presione 2 para agregar contactos")
+     print("Presione 3 para mostrar detalles de un contacto")
+     print("Presione 4 para entrar a un chat 1 a 1")
+     print("Presione 5 para entrar a un chat grupal")
+     print("Presione 6 para cambiar mensaje de presencia")
+     print("Presione 7 para eliminar cuenta")
+     print("Presione 8 para cerrar sesion")
+     print("Presione 9 para salir del programa")
+
      op2  = input("")
+
+     
      while(op2 != "9"):
+          
           if(op2 =="1"):
-               print("mostrar contactos")
+               xmpp = Client_test(usu, psd)
+               xmpp.register_plugin('xep_0030') # Service Discovery
+               xmpp.register_plugin('xep_0199') # XMPP Ping
+               xmpp.register_plugin('xep_0045') # Mulit-User Chat (MUC)
+               xmpp.register_plugin('xep_0096') # Jabber Search
+               xmpp.connect()
+               xmpp.process(forever=False)
+
 
           elif(op2 == "2"):
                print("Agregar contacto")
 
+
           elif(op2 == "3"):
-               print("MOstrar detalles de un contacto")
+               contact = input("Escriba el Usuario del contacto: ") 
+               xmpp = Client_test(args.jid, args.password, contact)
+               xmpp.register_plugin('xep_0030') # Service Discovery
+               xmpp.register_plugin('xep_0199') # XMPP Ping
+               xmpp.register_plugin('xep_0045') # Mulit-User Chat (MUC)
+               xmpp.register_plugin('xep_0096') # Jabber Search
+               xmpp.connect()
+               xmpp.process(forever=False)
+
 
           elif(op2 == "4"):
                print("Chat 1 a 1")
@@ -127,7 +276,7 @@ while (op != "3"):
                print("Def mensaje de presencia")
 
           elif(op2 == "7"):
-               xmpp = Register(usu, psd)
+               xmpp = RyE(usu, psd)
                xmpp.delete_account()
                xmpp = None
                control = False
