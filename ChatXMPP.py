@@ -195,6 +195,37 @@ class Agregar(slixmpp.ClientXMPP):
 
 
 
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
+# Clase Para Enviar mensajes   
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
+
+class MSG(slixmpp.ClientXMPP):
+    def __init__(self, jid, password, recipient, message):
+        slixmpp.ClientXMPP.__init__(self, jid, password)
+
+        self.recipient = recipient
+        self.msg = message
+        self.add_event_handler("session_start", self.start)
+        self.add_event_handler("message", self.message)
+
+    async def start(self, event):
+        self.send_presence()
+        await self.get_roster()
+        self.send_message(mto=self.recipient,
+                          mbody=self.msg,
+                          mtype='chat')
+
+    def message(self, msg):
+        if msg['type'] in ('chat'):
+            recipient = msg['to']
+            body = msg['body']
+            print(str(recipient) +  ": " + str(body))
+            message = input("Indique el mensaje: ")
+            self.send_message(mto=self.recipient,
+                              mbody=message)
+
+
+
 #Final de definicion de clases
             
 #+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
@@ -292,7 +323,19 @@ while (op != "3"):
 
 
           elif(op2 == "4"):
-               print("Chat 1 a 1")
+               try:
+                    cont = input("Ingrese el recipiente: ") 
+                    msg = input("Indique su mensaje: ")
+                    xmpp = MSG(usu, psd, cont, msg)
+                    xmpp.register_plugin('xep_0030') # Service Discovery
+                    xmpp.register_plugin('xep_0199') # XMPP Ping
+                    xmpp.register_plugin('xep_0045') # Mulit-User Chat (MUC)
+                    xmpp.register_plugin('xep_0096') # Jabber Search
+                    xmpp.connect()
+                    xmpp.process(forever=False)
+               except KeyboardInterrupt as e:
+                    print('Conversacion finalizada')
+                    xmpp.disconnect()
 
           elif(op2 == "5"):
                print("Chat grupal")
