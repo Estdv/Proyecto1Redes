@@ -102,7 +102,7 @@ class Roster(slixmpp.ClientXMPP):
         except IqError as e:
             print("Error", e)
         except IqTimeout:
-            print("Timeout del servidor")
+            print("Timeout en el Server")
         
         self.presences.wait(3)
 
@@ -134,22 +134,21 @@ class Roster(slixmpp.ClientXMPP):
         if(self.show):
             if(not self.user):
                 if len(my_contacts)==0:
-                    print('No hay contactos en linea')
+                    print('No hay usuarios conectados')
                 else:
-                    print('\n Usuarios: \n\n')
+                    print('USERS: \n')
                 for contact in my_contacts:
-                    print('\tUsuario:' + contact[0] + '\t\tSub:' + contact[1] + '\t\tStatus:' + contact[2])
+                    print('\tusuario:' , contact[0] , '\t\tSub:' , contact[1] , '\t\tStatus:' , contact[2])
             else:
                 print('\n\n')
                 for contact in my_contacts:
                     if(contact[0]==self .user):
-                        print('\tUsuario:' + contact[0] + '\n\tSub:' + contact[1] + '\n\tStatus:' + contact[2] + '\n\tUsuario:' + contact[3] + '\n\tPrioridad:' + contact[4])
+                        print('\tUsuario:' , contact[0] , '\n\tSub:' , contact[1] , '\n\tStatus:' , contact[2] , '\n\tNombre:' , contact[3] , '\n\tPrioridad:' , contact[4])
         else:
             for JID in self.contacts:
                 self.notification_(JID, self.message, 'active')
 
         self.disconnect()
-        print('\n\n')
 
     def notification_(self, to, body, my_type):
 
@@ -171,7 +170,7 @@ class Roster(slixmpp.ClientXMPP):
         except IqError as e:
             print("Error", e)
         except IqTimeout:
-            print("Timeout del server")
+            print("Timeout en el servidor")
 
 
 #+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
@@ -257,7 +256,7 @@ psd = ""
 
 while (op != "3"):
      if(op== "1"):
-          usu = input("Ingrese nuevo usuario: ")
+          usu = input("Ingrese usuario: ")
           psd = getpass("Ingrese contraseña: ")
 
      elif(op == "2"):
@@ -283,12 +282,11 @@ while (op != "3"):
      print("Presione 6 para cambiar mensaje de presencia")
      print("Presione 7 para eliminar cuenta")
      print("Presione 8 para cerrar sesion")
-     print("Presione 9 para salir del programa")
 
      op2  = input("")
 
      
-     while(op2 != "9"):
+     while(op2 != "8"):
           
           if(op2 =="1"):
                xmpp = Roster(usu, psd)
@@ -298,7 +296,7 @@ while (op != "3"):
                xmpp.register_plugin('xep_0096') # Jabber Search
                xmpp.connect()
                xmpp.process(forever=False)
-
+               print("Done")
 
           elif(op2 == "2"):
                con = input("Escriba el Usuario del contacto: ") 
@@ -341,7 +339,14 @@ while (op != "3"):
                print("Chat grupal")
 
           elif(op2 == "6"):
-               print("Def mensaje de presencia")
+               msg = input("indique su mensaje de presencia: ") 
+               xmpp = Roster(usu, psd, show=False, message=msg)
+               xmpp.register_plugin('xep_0030') # Service Discovery
+               xmpp.register_plugin('xep_0199') # XMPP Ping
+               xmpp.register_plugin('xep_0045') # Mulit-User Chat (MUC)
+               xmpp.register_plugin('xep_0096') # Jabber Search
+               xmpp.connect()
+               xmpp.process(forever=False)
 
           elif(op2 == "7"):
                xmpp = RyE(usu, psd)
@@ -350,12 +355,28 @@ while (op != "3"):
                control = False
                op2 = "9"
 
-          elif(op2 == "8"):
-               op2 = "9"
-               op = "3"
 
           else:
                print("Opcion invalida intente denuevo")
+
+
+          print("Presione 1 para mostrar contactos")
+          print("Presione 2 para agregar contactos")
+          print("Presione 3 para mostrar detalles de un contacto")
+          print("Presione 4 para entrar a un chat 1 a 1")
+          print("Presione 5 para entrar a un chat grupal")
+          print("Presione 6 para cambiar mensaje de presencia")
+          print("Presione 7 para eliminar cuenta")
+          print("Presione 8 para cerrar sesion")
+          
+
+          op2  = input("")
+          
+     print("PRESIONE 1 PARA INGRESAR EN EL SERVIDOR DE ALUMCHAT")
+     print("PRESIONE 2 PARA REGISTRARSE EN EL SERVIDOR DE ALUMCHAT")
+     print("PRESIONE 3 PARA SALIR")
+
+     op = input("")
 
 print("GRACIAS HASTA LUEGO")
         
