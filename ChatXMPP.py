@@ -174,6 +174,24 @@ class Roster(slixmpp.ClientXMPP):
             print("Timeout del server")
 
 
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
+# Clase Para Agregar Contactos      
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
+
+class Agregar(slixmpp.ClientXMPP):
+    def __init__(self, jid, password, to):
+        slixmpp.ClientXMPP.__init__(self, jid, password)
+        self.add_event_handler("session_start", self.start)
+        self.to = to
+
+    async def start(self, event):
+        self.send_presence()
+        await self.get_roster()
+        try:
+            self.send_presence_subscription(pto=self.to) 
+        except IqTimeout:
+            print("Timeout del server") 
+        self.disconnect()
 
 
 
@@ -242,7 +260,7 @@ while (op != "3"):
      while(op2 != "9"):
           
           if(op2 =="1"):
-               xmpp = Client_test(usu, psd)
+               xmpp = Roster(usu, psd)
                xmpp.register_plugin('xep_0030') # Service Discovery
                xmpp.register_plugin('xep_0199') # XMPP Ping
                xmpp.register_plugin('xep_0045') # Mulit-User Chat (MUC)
@@ -252,12 +270,19 @@ while (op != "3"):
 
 
           elif(op2 == "2"):
-               print("Agregar contacto")
+               con = input("Escriba el Usuario del contacto: ") 
+               xmpp = Agregar(usu, psd, con)
+               xmpp.register_plugin('xep_0030') # Service Discovery
+               xmpp.register_plugin('xep_0199') # XMPP Ping
+               xmpp.register_plugin('xep_0045') # Mulit-User Chat (MUC)
+               xmpp.register_plugin('xep_0096') # Jabber Search
+               xmpp.connect()
+               xmpp.process(forever=False)
 
 
           elif(op2 == "3"):
-               contact = input("Escriba el Usuario del contacto: ") 
-               xmpp = Client_test(args.jid, args.password, contact)
+               con = input("Escriba el Usuario del contacto: ") 
+               xmpp = Roster(usu, psd, con)
                xmpp.register_plugin('xep_0030') # Service Discovery
                xmpp.register_plugin('xep_0199') # XMPP Ping
                xmpp.register_plugin('xep_0045') # Mulit-User Chat (MUC)
