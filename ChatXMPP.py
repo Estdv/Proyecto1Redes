@@ -224,6 +224,31 @@ class MSG(slixmpp.ClientXMPP):
                               mbody=message)
 
 
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
+# Clase Para Unirse a un Grupo  
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
+
+class Grupo(slixmpp.ClientXMPP):
+    def __init__(self, jid, password, room_jid, room_ak):
+        slixmpp.ClientXMPP.__init__(self, jid, password)
+        self.add_event_handler("session_start", self.start)
+        self.room = room_jid
+        self.ak = room_ak
+
+    async def start(self, event):
+        self.send_presence()
+        await self.get_roster()
+        try:
+            self.plugin['xep_0045'].join_muc(self.room, self.ak)
+            print("Se ha unido al grupo", e)
+        except IqError as e:
+            print("Error", e)
+        except IqTimeout:
+            print("Timeout")
+        self.disconnect()
+
+
+        
 
 #Final de definicion de clases
             
@@ -335,7 +360,17 @@ while (op != "3"):
                     xmpp.disconnect()
 
           elif(op2 == "5"):
-               print("Chat grupal")
+               
+               gr = input("Escriba el JID del grupo: ") 
+               nom = input("Escriba su alias en el grupo: ")
+               if '@conference.alumchat.xyz':
+                    xmpp = Grupo(usu, psd, gr, nom)
+                    xmpp.register_plugin('xep_0030') # Service Discovery
+                    xmpp.register_plugin('xep_0199') # XMPP Ping
+                    xmpp.register_plugin('xep_0045') # Mulit-User Chat (MUC)
+                    xmpp.register_plugin('xep_0096') # Jabber Search
+                    xmpp.connect()
+                    xmpp.process(forever=False)
 
           elif(op2 == "6"):
                msg = input("indique su mensaje de presencia: ") 
