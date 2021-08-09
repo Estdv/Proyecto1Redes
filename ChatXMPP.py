@@ -277,8 +277,8 @@ while (op != "3"):
      print("Presione 1 para mostrar contactos")
      print("Presione 2 para agregar contactos")
      print("Presione 3 para mostrar detalles de un contacto")
-     print("Presione 4 para entrar a un chat 1 a 1")
-     print("Presione 5 para entrar a un chat grupal")
+     print("Presione 4 para entrar a un chat 1 a 1")#Ver mensajes. Referencia echobot. archivos, notificaciones
+     print("Presione 5 para entrar a un chat grupal")#falta. Join y participar. archivos, notificaciones
      print("Presione 6 para cambiar mensaje de presencia")
      print("Presione 7 para eliminar cuenta")
      print("Presione 8 para cerrar sesion")
