@@ -136,14 +136,14 @@ class Roster(slixmpp.ClientXMPP):
                 if len(my_contacts)==0:
                     print('No hay usuarios conectados')
                 else:
-                    print('USERS: \n')
+                    print('Usuarios: \n')
                 for contact in my_contacts:
-                    print('\tusuario:' , contact[0] , '\t\tSub:' , contact[1] , '\t\tStatus:' , contact[2])
+                    print('\tusuario:' , contact[0] , '\t\tStatus:' , contact[2])
             else:
                 print('\n\n')
                 for contact in my_contacts:
                     if(contact[0]==self .user):
-                        print('\tUsuario:' , contact[0] , '\n\tSub:' , contact[1] , '\n\tStatus:' , contact[2] , '\n\tNombre:' , contact[3] , '\n\tPrioridad:' , contact[4])
+                        print('\tUsuario:' , contact[0] , '\n\tStatus:' , contact[2] , '\n\tNombre:' , contact[3])
         else:
             for JID in self.contacts:
                 self.notification_(JID, self.message, 'active')
@@ -296,7 +296,6 @@ while (op != "3"):
                xmpp.register_plugin('xep_0096') # Jabber Search
                xmpp.connect()
                xmpp.process(forever=False)
-               print("Done")
 
           elif(op2 == "2"):
                con = input("Escriba el Usuario del contacto: ") 
