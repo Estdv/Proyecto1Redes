@@ -257,7 +257,43 @@ class Grupo(slixmpp.ClientXMPP):
             self.send_message(mto=msg['from'].bare, mbody=message, mtype='groupchat')
 
 
-        
+
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
+# Clase Para Enviar archivos
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
+
+class Archivos(slixmpp.ClientXMPP):
+
+    def __init__(self, jid, password, receiver, filename):
+        slixmpp.ClientXMPP.__init__(self, jid, password)
+
+        self.receiver = receiver
+
+        self.file = open(filename, 'rb')
+        self.add_event_handler("session_start", self.start)
+
+    async def start(self, event):
+        try:
+            #Set the receiver
+            proxy = await self['xep_0065'].handshake(self.receiver)
+            while True:
+                data = self.file.read(1048576)
+                if not data:
+                    break
+                await proxy.write(data)
+
+            proxy.transport.write_eof()
+        except (IqError, IqTimeout) as e:
+            print('Timeout', e)
+        else:
+            print('Procedimiento terminado')
+        finally:
+            self.file.close()
+            self.disconnect()
+
+
+
+
 
 #Final de definicion de clases
             
@@ -316,18 +352,19 @@ while (op != "3"):
      print("Presione 1 para mostrar contactos")
      print("Presione 2 para agregar contactos")
      print("Presione 3 para mostrar detalles de un contacto")
-     print("Presione 4 para entrar a un chat 1 a 1")#archivos, notificaciones
-     print("Presione 5 para entrar a un chat grupal")#participar. archivos, notificaciones
+     print("Presione 4 para entrar a un chat 1 a 1")
+     print("Presione 5 para entrar a un chat grupal")
      print("Presione 6 para cambiar mensaje de presencia")
-     print("Presione 7 para eliminar cuenta")
-     print("Presione 8 para cerrar sesion")
+     print("Presione 7 para enviar y recibir archivos")
+     print("Presione 8 para eliminar cuenta")
+     print("Presione 9 para cerrar sesion")
      print("-----------------------------------------------")
      print("")
 
      op2  = input("")
 
      
-     while(op2 != "8"):
+     while(op2 != "9"):
           
           if(op2 =="1"):
                xmpp = Roster(usu, psd)
@@ -402,12 +439,21 @@ while (op != "3"):
                xmpp.connect()
                xmpp.process(forever=False)
 
-          elif(op2 == "7"):
+          elif(op == "8"):
+               para = input("Indique el usuario al que quiere enviar: ") 
+               file = input("Direccion del archivo: ") 
+               xmpp = Archivos(usu, psd, para, file)
+               xmpp.register_plugin('xep_0030') # Service Discovery
+               xmpp.register_plugin('xep_0065') # SOCKS5 Bytestreams
+               xmpp.connect()
+               xmpp.process(forever=False)
+
+          elif(op2 == "8"):
                xmpp = RyE(usu, psd)
                xmpp.delete_account()
                xmpp = None
                control = False
-               op2 = "9"
+               break
 
 
           else:
@@ -419,8 +465,8 @@ while (op != "3"):
           print("Presione 1 para mostrar contactos")
           print("Presione 2 para agregar contactos")
           print("Presione 3 para mostrar detalles de un contacto")
-          print("Presione 4 para entrar a un chat 1 a 1")#archivos, notificaciones
-          print("Presione 5 para entrar a un chat grupal")#participar. archivos, notificaciones
+          print("Presione 4 para entrar a un chat 1 a 1")
+          print("Presione 5 para entrar a un chat grupal")
           print("Presione 6 para cambiar mensaje de presencia")
           print("Presione 7 para eliminar cuenta")
           print("Presione 8 para cerrar sesion")
