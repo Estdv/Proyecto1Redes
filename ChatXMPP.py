@@ -215,13 +215,13 @@ class MSG(slixmpp.ClientXMPP):
                           mtype='chat')
 
     def message(self, msg):
-        if msg['type'] in ('chat'):
-            recipient = msg['to']
-            body = msg['body']
-            print(str(recipient) +  ": " + str(body))
-            message = input("Indique el mensaje: ")
-            self.send_message(mto=self.recipient,
-                              mbody=message)
+         while(message != "_exit"):
+              if msg['type'] in ('chat'):
+                   recipient = msg['to']
+                   body = msg['body']
+                   print(str(recipient) +  ": " + str(body))
+                   message = input("Indique el mensaje: ")
+                   self.send_message(mto=self.recipient, mbody=message)
 
 
 #+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+

@@ -8,9 +8,12 @@
 import logging
 from getpass import getpass
 from argparse import ArgumentParser
-
+import sys
 import slixmpp
+import asyncio
 
+if sys.platform == 'win32' and sys.version_info >= (3, 8):
+     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 class EchoBot(slixmpp.ClientXMPP):
 
@@ -106,4 +109,6 @@ if __name__ == '__main__':
 
     # Connect to the XMPP server and start processing XMPP stanzas.
     xmpp.connect()
+    print("Connected")
     xmpp.process()
+    print("proces")
