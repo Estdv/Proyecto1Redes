@@ -267,14 +267,18 @@ class Grupo(slixmpp.ClientXMPP):
 
 #Programa Principal
 
-
-
+print("")
+print("======================================================")
 print("BIENVENIDO AL CHAT")
 print("PRESIONE 1 PARA INGRESAR EN EL SERVIDOR DE ALUMCHAT")
 print("PRESIONE 2 PARA REGISTRARSE EN EL SERVIDOR DE ALUMCHAT")
 print("PRESIONE 3 PARA SALIR")
-
-op = input("")
+print("")
+op = input("Opcion: ")
+print("======================================================")
+print("")
+print("")
+print("")
 
 usu = ""
 psd = ""
@@ -298,15 +302,18 @@ while (op != "3"):
      else:
           print("Opcion invalida intente denuevo")
 
-
+     print("")
+     print("-----------------------------------------------")
      print("Presione 1 para mostrar contactos")
      print("Presione 2 para agregar contactos")
      print("Presione 3 para mostrar detalles de un contacto")
-     print("Presione 4 para entrar a un chat 1 a 1")#Ver mensajes. Referencia echobot. archivos, notificaciones
-     print("Presione 5 para entrar a un chat grupal")#falta. Join y participar. archivos, notificaciones
+     print("Presione 4 para entrar a un chat 1 a 1")#archivos, notificaciones
+     print("Presione 5 para entrar a un chat grupal")#participar. archivos, notificaciones
      print("Presione 6 para cambiar mensaje de presencia")
      print("Presione 7 para eliminar cuenta")
      print("Presione 8 para cerrar sesion")
+     print("-----------------------------------------------")
+     print("")
 
      op2  = input("")
 
@@ -394,23 +401,34 @@ while (op != "3"):
                print("Opcion invalida intente denuevo")
 
 
+          print("")
+          print("-----------------------------------------------")
           print("Presione 1 para mostrar contactos")
           print("Presione 2 para agregar contactos")
           print("Presione 3 para mostrar detalles de un contacto")
-          print("Presione 4 para entrar a un chat 1 a 1")
-          print("Presione 5 para entrar a un chat grupal")
+          print("Presione 4 para entrar a un chat 1 a 1")#archivos, notificaciones
+          print("Presione 5 para entrar a un chat grupal")#participar. archivos, notificaciones
           print("Presione 6 para cambiar mensaje de presencia")
           print("Presione 7 para eliminar cuenta")
           print("Presione 8 para cerrar sesion")
+          print("-----------------------------------------------")
+          print("")
           
 
           op2  = input("")
           
+     print("")
+     print("======================================================")
+     print("BIENVENIDO AL CHAT")
      print("PRESIONE 1 PARA INGRESAR EN EL SERVIDOR DE ALUMCHAT")
      print("PRESIONE 2 PARA REGISTRARSE EN EL SERVIDOR DE ALUMCHAT")
      print("PRESIONE 3 PARA SALIR")
-
-     op = input("")
+     print("")
+     op = input("Opcion: ")
+     print("======================================================")
+     print("")
+     print("")
+     print("")
 
 print("GRACIAS HASTA LUEGO")
         
