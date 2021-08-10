@@ -199,29 +199,29 @@ class Agregar(slixmpp.ClientXMPP):
 #+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
 
 class MSG(slixmpp.ClientXMPP):
-    def __init__(self, jid, password, recipient, message):
-        slixmpp.ClientXMPP.__init__(self, jid, password)
+     def __init__(self, jid, password, recipient, message):
+          slixmpp.ClientXMPP.__init__(self, jid, password)
+          self.recipient = recipient
+          self.msg = message
+          self.add_event_handler("session_start", self.start)
+          self.add_event_handler("message", self.message)
 
-        self.recipient = recipient
-        self.msg = message
-        self.add_event_handler("session_start", self.start)
-        self.add_event_handler("message", self.message)
+     async def start(self, event):
+          self.send_presence()
+          await self.get_roster()
+          self.send_message(mto=self.recipient,mbody=self.msg,mtype='chat')
 
-    async def start(self, event):
-        self.send_presence()
-        await self.get_roster()
-        self.send_message(mto=self.recipient,
-                          mbody=self.msg,
-                          mtype='chat')
 
-    def message(self, msg):
-         while(message != "_exit"):
-              if msg['type'] in ('chat'):
-                   recipient = msg['to']
-                   body = msg['body']
-                   print(str(recipient) +  ": " + str(body))
-                   message = input("Indique el mensaje: ")
-                   self.send_message(mto=self.recipient, mbody=message)
+     def message(self, msg):
+          
+          if msg['type'] in ('chat'):
+          
+               recipient = msg['to']
+               body = msg['body']
+               print(str(recipient) +  ": " + str(body))
+               message = input("Mensaje: ")
+               self.send_message(mto=self.recipient,mbody=message)
+                    
 
 
 #+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
@@ -347,7 +347,7 @@ while (op != "3"):
           elif(op2 == "4"):
                try:
                     cont = input("Ingrese el recipiente: ") 
-                    msg = input("Indique su mensaje: ")
+                    msg = input("Mensaje: ")
                     xmpp = MSG(usu, psd, cont, msg)
                     xmpp.register_plugin('xep_0030') # Service Discovery
                     xmpp.register_plugin('xep_0199') # XMPP Ping
