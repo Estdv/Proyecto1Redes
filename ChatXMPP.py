@@ -65,29 +65,37 @@ class RyE(slixmpp.ClientXMPP):
 #+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
 
 class Del(slixmpp.ClientXMPP):
-    def _init_(self, jid,password):
-        slixmpp.ClientXMPP._init_(self,jid,password)
+    def __init__(self, jid, password):
+        slixmpp.ClientXMPP.__init__(self, jid, password)
+
+        self.user = jid
         self.add_event_handler("session_start", self.start)
 
-    async def start(self,event):
+    def start(self, event):
+  
         self.send_presence()
-        await self.get_roster()
+        self.get_roster()
 
-        resp = self.Iq()
-        resp['type'] = 'set'
-        resp['from'] = self.boundjid.user
-        resp['password'] = self.password
-        resp['register']['remove'] = 'remove'
+        delete = self.Iq()
+        delete['type'] = 'set'
+        delete['from'] = self.user
+        fragment = ET.fromstring("<query xmlns='jabber:iq:register'><remove/></query>")
+        delete.append(fragment)
 
         try:
-            resp.send()
-            print("Cuenta Borrada"+str(self.boundjid))
+            delete.send()
+            print("Account deleted")
         except IqError as e:
-            print("Error")
-            self.disconnect()
+           
+            print("Error on deletition", e)
         except IqTimeout:
-            print("Timeout")
-            self.disconnect()
+
+            print("THE SERVER IS NOT WITH YOU")
+        except Exception as e:
+     
+            print(e)  
+
+        self.disconnect()
 
 
 
@@ -462,14 +470,16 @@ while (op != "3"):
                xmpp.process(forever=False)
 
           elif(op2 == "8"):
-               xmpp=Del(usu,psd)
+               
+               xmpp = Del(usu, psd)
                xmpp.register_plugin('xep_0030') # Service Discovery
                xmpp.register_plugin('xep_0004') # Data forms
                xmpp.register_plugin('xep_0066') # Out-of-band Data
                xmpp.register_plugin('xep_0077') # In-band Registration
                xmpp.connect()
                xmpp.process()
-               break
+               xmpp = None
+               control = False
 
 
           else:
