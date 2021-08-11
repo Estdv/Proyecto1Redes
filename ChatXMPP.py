@@ -57,24 +57,37 @@ class RyE(slixmpp.ClientXMPP):
             self.disconnect()
         except Exception as e:
             print(e)
-            self.disconnect()  
+            self.disconnect()
 
-    def delete_account(self):
-        delete = self.Iq()
-        delete['type'] = 'set'
-        delete['from'] = self.user
-        fragment = ET.fromstring("<query xmlns='jabber:iq:register'><remove/></query>")
-        delete.append(fragment)
+
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
+#Clase Para Registro y Eliminacion de Cuenta          
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
+
+class Del(slixmpp.ClientXMPP):
+    def _init_(self, jid,password):
+        slixmpp.ClientXMPP._init_(self,jid,password)
+        self.add_event_handler("session_start", self.start)
+
+    async def start(self,event):
+        self.send_presence()
+        await self.get_roster()
+
+        resp = self.Iq()
+        resp['type'] = 'set'
+        resp['from'] = self.boundjid.user
+        resp['password'] = self.password
+        resp['register']['remove'] = 'remove'
 
         try:
-            delete.send()
-            print("Cuenta Borrada")
+            resp.send()
+            print("Cuenta Borrada"+str(self.boundjid))
         except IqError as e:
-            print("Error al borrar la cuenta", e)
+            print("Error")
+            self.disconnect()
         except IqTimeout:
-            print("Timeout en el servidor")
-        except Exception as e:
-            print(e)
+            print("Timeout")
+            self.disconnect()
 
 
 
@@ -216,7 +229,7 @@ class MSG(slixmpp.ClientXMPP):
           
           if msg['type'] in ('chat'):
           
-               recipient = msg['to']
+               recipient = msg['from']
                body = msg['body']
                print(str(recipient) +  ": " + str(body))
                message = input("Mensaje: ")
@@ -439,7 +452,7 @@ while (op != "3"):
                xmpp.connect()
                xmpp.process(forever=False)
 
-          elif(op == "8"):
+          elif(op2 == "7"):
                para = input("Indique el usuario al que quiere enviar: ") 
                file = input("Direccion del archivo: ") 
                xmpp = Archivos(usu, psd, para, file)
@@ -449,10 +462,13 @@ while (op != "3"):
                xmpp.process(forever=False)
 
           elif(op2 == "8"):
-               xmpp = RyE(usu, psd)
-               xmpp.delete_account()
-               xmpp = None
-               control = False
+               xmpp=Del(usu,psd)
+               xmpp.register_plugin('xep_0030') # Service Discovery
+               xmpp.register_plugin('xep_0004') # Data forms
+               xmpp.register_plugin('xep_0066') # Out-of-band Data
+               xmpp.register_plugin('xep_0077') # In-band Registration
+               xmpp.connect()
+               xmpp.process()
                break
 
 
@@ -468,8 +484,9 @@ while (op != "3"):
           print("Presione 4 para entrar a un chat 1 a 1")
           print("Presione 5 para entrar a un chat grupal")
           print("Presione 6 para cambiar mensaje de presencia")
-          print("Presione 7 para eliminar cuenta")
-          print("Presione 8 para cerrar sesion")
+          print("Presione 7 para enviar y recibir archivos")
+          print("Presione 8 para eliminar cuenta")
+          print("Presione 9 para cerrar sesion")
           print("-----------------------------------------------")
           print("")
           
