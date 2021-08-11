@@ -84,13 +84,13 @@ class Del(slixmpp.ClientXMPP):
 
         try:
             delete.send()
-            print("Account deleted")
+            print("Cuenta Borrada")
         except IqError as e:
            
-            print("Error on deletition", e)
+            print("Error", e)
         except IqTimeout:
 
-            print("THE SERVER IS NOT WITH YOU")
+            print("timeout del server")
         except Exception as e:
      
             print(e)  
@@ -313,6 +313,56 @@ class Archivos(slixmpp.ClientXMPP):
             self.disconnect()
 
 
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
+# Clase Para Notificaciones
+#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
+class Noti(slixmpp.ClientXMPP):
+
+    def __init__(self, jid, password, user, message, type_):
+        slixmpp.ClientXMPP.__init__(self, jid, password)
+
+        self.add_event_handler("session_start", self.start)
+        self.add_event_handler("message", self.message)
+        self.message = message
+        self.user = user
+        self.type_ = type_
+
+    async def start(self, event):
+        
+        self.send_presence()
+        await self.get_roster()
+
+     
+        self.notification_(self.user, self.message, 'active')
+
+    def notification_(self, to, body, my_type):
+        
+        message = self.Message()
+        message['to'] = to
+        message['type'] = self.type_
+        message['body'] = body
+
+        if (my_type == 'active'):
+            fragmentStanza = ET.fromstring("<active xmlns='http://jabber.org/protocol/chatstates'/>")
+        elif (my_type == 'composing'):
+            fragmentStanza = ET.fromstring("<composing xmlns='http://jabber.org/protocol/chatstates'/>")
+        elif (my_type == 'inactive'):
+            fragmentStanza = ET.fromstring("<inactive xmlns='http://jabber.org/protocol/chatstates'/>")
+        message.append(fragmentStanza)
+
+        try:
+            message.send()
+        except IqError as e:
+            print("Error", e)
+        except IqTimeout:
+            print("Timeout")
+
+    def message(self, msg):
+        recipient = msg['from']
+        body = msg['body']
+        print(str(recipient) +  ": " + str(body))
+
+
 
 
 
@@ -377,15 +427,16 @@ while (op != "3"):
      print("Presione 5 para entrar a un chat grupal")
      print("Presione 6 para cambiar mensaje de presencia")
      print("Presione 7 para enviar y recibir archivos")
-     print("Presione 8 para eliminar cuenta")
-     print("Presione 9 para cerrar sesion")
+     print("Presione 8 para notificaciones")
+     print("Presione 9 para eliminar cuenta")
+     print("Presione 10 para cerrar sesion")
      print("-----------------------------------------------")
      print("")
 
      op2  = input("")
 
      
-     while(op2 != "9"):
+     while(op2 != "10"):
           
           if(op2 =="1"):
                xmpp = Roster(usu, psd)
@@ -469,7 +520,26 @@ while (op != "3"):
                xmpp.connect()
                xmpp.process(forever=False)
 
+
           elif(op2 == "8"):
+               
+               try:
+                    
+                    para = input("Ingrese el recipiente: ") 
+                    msg = input("Mensaje: ")
+                    ty = input("Type: ")
+                    xmpp = Noti(usu, psd, para, msg, ty)
+                    xmpp.register_plugin('xep_0030') # Service Discovery
+                    xmpp.register_plugin('xep_0199') # XMPP Ping
+                    xmpp.register_plugin('xep_0045') # Mulit-User Chat (MUC)
+                    xmpp.register_plugin('xep_0096') # Jabber Search
+                    xmpp.connect()
+                    xmpp.process(forever=False)
+               except KeyboardInterrupt as e:
+                    print('Notificaciones finalizadas')
+                    xmpp.disconnect()
+
+          elif(op2 == "9"):
                
                xmpp = Del(usu, psd)
                xmpp.register_plugin('xep_0030') # Service Discovery
@@ -480,6 +550,7 @@ while (op != "3"):
                xmpp.process()
                xmpp = None
                control = False
+               break
 
 
           else:
@@ -495,8 +566,9 @@ while (op != "3"):
           print("Presione 5 para entrar a un chat grupal")
           print("Presione 6 para cambiar mensaje de presencia")
           print("Presione 7 para enviar y recibir archivos")
-          print("Presione 8 para eliminar cuenta")
-          print("Presione 9 para cerrar sesion")
+          print("Presione 8 para notificaciones")
+          print("Presione 9 para eliminar cuenta")
+          print("Presione 10 para cerrar sesion")
           print("-----------------------------------------------")
           print("")
           
