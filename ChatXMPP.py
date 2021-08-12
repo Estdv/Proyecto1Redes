@@ -24,7 +24,7 @@ if sys.platform == 'win32' and sys.version_info >= (3, 8):
 
 
 #+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
-#Clase Para Registro y Eliminacion de Cuenta          
+#Clase Para Registro      
 #+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
      
 class RyE(slixmpp.ClientXMPP):
@@ -61,7 +61,7 @@ class RyE(slixmpp.ClientXMPP):
 
 
 #+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
-#Clase Para Registro y Eliminacion de Cuenta          
+#Clase Para Eliminacion de Cuenta          
 #+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
 
 class Del(slixmpp.ClientXMPP):
@@ -260,7 +260,6 @@ class Grupo(slixmpp.ClientXMPP):
 
         self.add_event_handler("session_start", self.start)
         self.add_event_handler("groupchat_message", self.muc_message)
-        self.add_event_handler("muc::%s::got_online" % self.room,self.muc_online)
 
     async def start(self, event):
 
