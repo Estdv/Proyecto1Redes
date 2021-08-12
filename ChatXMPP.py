@@ -24,7 +24,7 @@ if sys.platform == 'win32' and sys.version_info >= (3, 8):
 
 
 #+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
-#Clase Para Registro        
+#Clase Para Registro y Eliminacion de Cuenta          
 #+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
      
 class RyE(slixmpp.ClientXMPP):
@@ -61,7 +61,7 @@ class RyE(slixmpp.ClientXMPP):
 
 
 #+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
-#Eliminacion de Cuenta          
+#Clase Para Registro y Eliminacion de Cuenta          
 #+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
 
 class Del(slixmpp.ClientXMPP):
@@ -366,49 +366,6 @@ class Noti(slixmpp.ClientXMPP):
 
 
 
-#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
-# Clase Para Crear Grupos
-#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+
-class CG(slixmpp.ClientXMPP):
-     print("1")
-     def _init_(self, jid, password, room, nick):
-          print("1")
-          slixmpp.ClientXMPP._init_(self, jid, password)
-          print("1")
-          self.room = room
-          self.nick = nick
-          self.add_event_handler("session_start", self.start)
-    
-     async def start(self, event):
-          print("1")
-          await self.get_roster()
-          print("1")
-          self.send_presence()
-          print("1")
-          try:
-               print("1")
-               status = "Joining the room..."
-               self.plugin['xep_0045'].join_muc(room,nick, pstatus=status, pfrom=self.boundjid.full)
-               print("1")
-
-               await self.plugin['xep_0045'].set_affiliation(room,'owner')
-               print("1")
-
-               self.plugin['xep_0045'].set_room_config(room,None,ifrom=self.boundjid.full)
-
-               print("Grupo: " + room + "creado con alias: "+nick)
-
-          except IqError as e:
-               raise Exception("Error", e)
-
-          
-          except IqTimeout:
-               raise Exception("Timeout del server")
-
-
-
-
-
 #Final de definicion de clases
             
 #+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
@@ -471,16 +428,15 @@ while (op != "3"):
      print("Presione 6 para cambiar mensaje de presencia")
      print("Presione 7 para enviar y recibir archivos")
      print("Presione 8 para notificaciones")
-     print("Presione 9 para crear un grupo")
-     print("Presione 10 para eliminar cuenta")
-     print("Presione 11 para cerrar sesion")
+     print("Presione 9 para eliminar cuenta")
+     print("Presione 10 para cerrar sesion")
      print("-----------------------------------------------")
      print("")
 
      op2  = input("")
 
      
-     while(op2 != "11"):
+     while(op2 != "10"):
           
           if(op2 =="1"):
                xmpp = Roster(usu, psd)
@@ -583,20 +539,7 @@ while (op != "3"):
                     print('Notificaciones finalizadas')
                     xmpp.disconnect()
 
-
-          elif (op2 == "9"):
-               gr = input("Escriba el JID del grupo: ") 
-               nom = input("Escriba su alias en el grupo: ")
-               xmpp = CG(usu, psd, gr, nom)
-               xmpp.register_plugin('xep_0030')
-               xmpp.register_plugin('xep_0199')
-               xmpp.register_plugin('xep_0004')
-               xmpp.register_plugin('xep_0045')
-               xmpp.connect()
-               xmpp.process(forever=False)
-             
-
-          elif(op2 == "10"):
+          elif(op2 == "9"):
                
                xmpp = Del(usu, psd)
                xmpp.register_plugin('xep_0030') # Service Discovery
@@ -605,8 +548,10 @@ while (op != "3"):
                xmpp.register_plugin('xep_0077') # In-band Registration
                xmpp.connect()
                xmpp.process()
-               xmpp.disconnect()
+               xmpp = None
+               control = False
                break
+
 
           else:
                print("Opcion invalida intente denuevo")
@@ -622,9 +567,8 @@ while (op != "3"):
           print("Presione 6 para cambiar mensaje de presencia")
           print("Presione 7 para enviar y recibir archivos")
           print("Presione 8 para notificaciones")
-          print("Presione 9 para crear un grupo")
-          print("Presione 10 para eliminar cuenta")
-          print("Presione 11 para cerrar sesion")
+          print("Presione 9 para eliminar cuenta")
+          print("Presione 10 para cerrar sesion")
           print("-----------------------------------------------")
           print("")
           
