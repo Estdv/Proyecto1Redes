@@ -47,9 +47,9 @@ You can also run it from your prefered ide without inconvenience.
 
 ## How it works
 
-Several classes for each of the funcionatlitues
-Implementation in a standard sentinel style menu
-Call the class and the respecrive plugins
+* Several classes for each of the funcionatlities
+* Implementation in a standard sentinel style menu
+* Call the class and the respective plugins
 
 
 ## Github
