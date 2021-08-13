@@ -6,6 +6,14 @@
 
 #Implementacion de xmpp en un cliente
 
+'''
+Several classes for each of the funcionatlitues
+Implementation in a standard sentinel style menu
+Call the class and the respecrive plugins
+
+'''
+
+
 import sys
 import aiodns
 import asyncio
@@ -382,6 +390,8 @@ class Noti(slixmpp.ClientXMPP):
 
 #Programa Principal
 
+
+#menu
 print("")
 print("======================================================")
 print("BIENVENIDO AL CHAT")
@@ -398,11 +408,14 @@ print("")
 usu = ""
 psd = ""
 
+
+#inicio de ciclo solicitud de usuario y contrasenia
 while (op != "3"):
+     #login
      if(op== "1"):
           usu = input("Ingrese usuario: ")
           psd = getpass("Ingrese contraseña: ")
-
+     #registro
      elif(op == "2"):
           usu = input("Ingrese nuevo usuario: ")
           psd = getpass("Ingrese contraseña: ")
@@ -416,7 +429,7 @@ while (op != "3"):
           print("Registro Completado\n")
      else:
           print("Opcion invalida intente denuevo")
-
+     #opciones
      print("")
      print("-----------------------------------------------")
      print("Presione 1 para mostrar contactos")
@@ -434,9 +447,9 @@ while (op != "3"):
 
      op2  = input("")
 
-     
+     #ciclo de login     
      while(op2 != "10"):
-          
+          #get contacts
           if(op2 =="1"):
                xmpp = Roster(usu, psd)
                xmpp.register_plugin('xep_0030') # Service Discovery
@@ -445,7 +458,7 @@ while (op != "3"):
                xmpp.register_plugin('xep_0096') # Jabber Search
                xmpp.connect()
                xmpp.process(forever=False)
-
+          #add contacts
           elif(op2 == "2"):
                con = input("Escriba el Usuario del contacto: ") 
                xmpp = Agregar(usu, psd, con)
@@ -456,7 +469,7 @@ while (op != "3"):
                xmpp.connect()
                xmpp.process(forever=False)
 
-
+          #contact details
           elif(op2 == "3"):
                con = input("Escriba el Usuario del contacto: ") 
                xmpp = Roster(usu, psd, con)
@@ -467,7 +480,7 @@ while (op != "3"):
                xmpp.connect()
                xmpp.process(forever=False)
 
-
+          #1 on 1
           elif(op2 == "4"):
                try:
                     cont = input("Ingrese el recipiente: ") 
@@ -482,7 +495,7 @@ while (op != "3"):
                except KeyboardInterrupt as e:
                     print('Conversacion finalizada')
                     xmpp.disconnect()
-
+          #grupo chat
           elif(op2 == "5"):
 
                try:
@@ -499,7 +512,7 @@ while (op != "3"):
                     print('Chat Grupal Finalizado')
                     xmpp.disconnect()
                     
-
+          #presence
           elif(op2 == "6"):
                msg = input("indique su mensaje de presencia: ") 
                xmpp = Roster(usu, psd, show=False, message=msg)
@@ -509,7 +522,7 @@ while (op != "3"):
                xmpp.register_plugin('xep_0096') # Jabber Search
                xmpp.connect()
                xmpp.process(forever=False)
-
+          #Files. NOt working
           elif(op2 == "7"):
                para = input("Indique el usuario al que quiere enviar: ") 
                file = input("Direccion del archivo: ") 
@@ -519,7 +532,7 @@ while (op != "3"):
                xmpp.connect()
                xmpp.process(forever=False)
 
-
+          #notifications
           elif(op2 == "8"):
                
                try:
@@ -537,7 +550,7 @@ while (op != "3"):
                except KeyboardInterrupt as e:
                     print('Notificaciones finalizadas')
                     xmpp.disconnect()
-
+          #eliminar cuenta
           elif(op2 == "9"):
                
                xmpp = Del(usu, psd)
