@@ -31,18 +31,18 @@ You can also run it from your prefered ide without inconvenience.
 
 ## Requisites
 
-*Required Libraries
-	*Python 3+
-	*sys
-	*aiodnd
-	*asyncio
-	*logging
-	*getpass
-	*argparse
-	*slixmpp
-	*time
-	*threading
-	*base64
+* Required Libraries
+	* Python 3+
+	* sys
+	* aiodnd
+	* asyncio
+	* logging
+	* getpass
+	* argparse
+	* slixmpp
+	* time
+	* threading
+	* base64
 
 
 ## How it works
